@@ -12,17 +12,20 @@ uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 if uploaded_file is not None:
     df = pd.read_csv(uploaded_file, index_col=None)
 
-    st.write(f"There are {df.shape[0]} rows and {df.shape[1]} columns in this dataset")
-    st.write(f"The dataset has {df.isna().sum().sum()} missing values")
-    
+    st.subheader("Basic summary statistics of the dataset")
+    st.write(
+        f"There are {df.shape[0]:,} rows and {df.shape[1]:,} columns in this dataset.")
+    st.write(f"The dataset has {df.isna().sum().sum()} missing values.")
+
     st.subheader("First five rows of the dataset")
     st.dataframe(df.head())
 
-    st.subheader("Here is the Auto EDA report")
+    st.subheader("Auto EDA report")
     profile = df.profile_report(minimal=True)
     profile.to_file('auto_eda_report.html')
 
     with open('auto_eda_report.html', 'r') as f:
-        st.download_button('Download Report', f, file_name="auto_eda_report.html")
+        st.download_button('Download Report', f,
+                           file_name="auto_eda_report.html")
 
     st_profile_report(profile)
