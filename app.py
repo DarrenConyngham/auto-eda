@@ -16,8 +16,9 @@ if uploaded_file is not None:
 
     st.subheader("Here is the Auto EDA report")
     profile = df.profile_report(minimal=True)
-    st_profile_report(profile)
     profile.to_file('auto_eda_report.html')
 
     with open('auto_eda_report.html', 'r') as f:
         st.download_button('Download Report', f, file_name="auto_eda_report.html")
+
+    st_profile_report(profile)
