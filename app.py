@@ -5,7 +5,7 @@ from streamlit_pandas_profiling import st_profile_report
 
 
 st.title("Automatic Exploratory Data Analysis")
-st.subheader("Upload your dataset and get a full analysis on it in seconds")
+st.subheader("Upload your dataset and get a full analysis on it in seconds!")
 
 uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
 
@@ -14,8 +14,8 @@ if uploaded_file is not None:
 
     st.subheader("Basic summary statistics of the dataset")
     st.write(
-        f"There are {df.shape[0]:,} rows and {df.shape[1]:,} columns in this dataset.")
-    st.write(f"The dataset has {df.isna().sum().sum()} missing values.")
+        f"- There are {df.shape[0]:,} rows and {df.shape[1]:,} columns in this dataset.")
+    st.write(f"- The dataset has {df.isna().sum().sum()} missing values.")
 
     st.subheader("First five rows of the dataset")
     st.dataframe(df.head())
