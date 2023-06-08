@@ -2,6 +2,24 @@ import streamlit as st
 from ydata_profiling import ProfileReport
 import pandas as pd
 from streamlit_pandas_profiling import st_profile_report
+import re
+
+def insert_url_and_get_pattern(url):
+    pattern = r'key=([^&]*)'
+    match = re.search(pattern, url)
+    if match:
+        return r"https://docs.google.com/spreadsheets/d/" + match.group(1) + r"/export?gid=0&format=csv"
+    else:
+        return 'No match found'
+    
+def gsheet2df(gsheet_url):
+    # Replace /edit with /export?format=csv in the Google Sheets URL
+    csv_export_url = re.sub(r'/edit$', '/export?format=csv', gsheet_url)
+
+    # Use pandas to import the data
+    df = pd.read_csv(csv_export_url)
+
+    return df
 
 
 st.title("Automatic Exploratory Data Analysis")
@@ -20,25 +38,15 @@ if option == 'CSV':
 elif option == 'Google Sheet':
     url = st.text_input("Paste a link to a public Google Sheet here", value="")
 
-# while uploaded_file is None or url == "":
-#     pass
-
-# while uploaded_file is None or url == "":
-#     uploaded_file = st.file_uploader("Choose a CSV file", type="csv")
-
-#     st.write("OR paste a link to a Google Sheet below")
-
-#     url = st.text_input("Paste a link to a public Google Sheet here")
-
-    # if uploaded_file is None or uploaded_file == "":
-    #     st.warning("Upload a CSV file or paste a link to a Google Sheet above")
-
 
 if uploaded_file is not None or url != "":
     if uploaded_file is not None:
         df = pd.read_csv(uploaded_file, index_col=None)
     else:
-        df = pd.read_csv(url)
+        # url_1 = url.replace("/edit#gid=", "/export?format=csv&gid=")
+        df = gsheet2df(url)
+
+        # df = pd.read_csv(url, index_col=0)
 
     st.subheader("Basic summary statistics of the dataset")
     st.write(
