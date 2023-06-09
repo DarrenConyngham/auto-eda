@@ -3,6 +3,22 @@ from ydata_profiling import ProfileReport
 import pandas as pd
 from streamlit_pandas_profiling import st_profile_report
 
+import asyncio
+
+def get_or_create_eventloop():
+    try:
+        return asyncio.get_event_loop()
+    except RuntimeError as ex:
+        if "There is no current event loop in thread" in str(ex):
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            return asyncio.get_event_loop()
+
+loop = get_or_create_eventloop()
+asyncio.set_event_loop(loop)
+
+import sketch
+
 
 st.title("Automatic Exploratory Data Analysis")
 st.subheader("Upload your dataset and get a full analysis on it in seconds!")
@@ -26,6 +42,17 @@ if uploaded_file is not None:
 
     st.subheader("Descriptive statistics of the dataset")
     st.dataframe(df.describe(include='all'))
+
+    st.divider()
+
+    st.subheader("Query the dataset")
+    
+    text_query = st.text_input("Enter your query here")
+    st.write(f"Your question is: {text_query}")
+
+    if text_query:
+        answer = df.sketch.ask(text_query, call_display=False)
+        st.write(answer)
 
     st.divider()
 
